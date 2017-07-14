@@ -63,10 +63,10 @@ func handleFile(completeFileName string, directory Directory){
 
 		for _, rule := range directory.Rules{
 
-			log.Println(fileName, rule.Format)
+			log.Println(fileName, rule.Pattern)
 
 			//match regex
-			regex := fmt.Sprintf("^%s$",rule.Format)
+			regex := fmt.Sprintf("^%s$",rule.Pattern)
 			match, _ :=  regexp.MatchString(regex, fileName)
 
 			if !match{

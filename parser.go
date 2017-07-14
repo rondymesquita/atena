@@ -1,28 +1,39 @@
 package main
 
-var Rules = map[string]string{}
+import (
+	"strings"
+)
+
+//var Rules = map[string]string{}
 
 
 
 func NewParser() *Parser{
 
-	Rules = map[string]string{
+	rules := map[string]string{
 		"<number>": "\\d*",
 		"<aaaa>": "\\d{4}",
 		"<mm>": "\\d{2}",
 		"<dd>": "\\d{2}",
-		"*": ".*",
+		"<*>": ".*",
 	}
 
-	return &Parser{Rules}
+	return &Parser{rules}
 }
 
 type Parser struct{
-	Rules map[string]string
+	rules map[string]string
 }
 
-func (p Parser) Parse(value string) string{
+func (p Parser) RegexpFrom(value string) string{
+	for k, v := range p.rules{
+		value = strings.Replace(value, k, v, -1)
+	}
 
-	return ""
+	return value
+}
+
+func (p Parser) HasMatch(value, pattern string){
+
 }
 

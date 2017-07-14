@@ -24,7 +24,7 @@ type Directory struct{
 }
 
 type Rule struct{
-	Format string
+	Pattern string
 }
 
 func (config *Config) Load(fileName ...string){
