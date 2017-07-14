@@ -3,5 +3,5 @@ management:
     directories:
         - name: ""
           rules:
-#            - format: "ASM_RDP_sprint_.\d(.xls|.xlsx)"
-#            - format: "ASM2?_RDP_sprint_.{2}(.xls|.xlsx)"
+#            - format: ""
+#            - format: ""
