@@ -13,26 +13,98 @@ func TestParser(t *testing.T) {
 
 var _ = Describe("Parser behaviors", func() {
 
-	Context("Should get the correct regexp from string template", func() {
+	//Context("Should get the correct regexp from string template", func() {
+	//	var parser *Parser
+	//	BeforeEach(func(){
+	//		parser = NewParser()
+	//	})
+	//
+	//	It("When string contains number", func() {
+	//		regexp := parser.RegexpFrom("ATN_sample_<number>.doc")
+	//		Expect(regexp).Should(Equal("ATN_sample_\\d*.doc"))
+	//	})
+	//
+	//	It("When string contains date", func() {
+	//		regexp := parser.RegexpFrom("ATN_sample_<mm>_<dd>_<aaaa>.doc")
+	//		Expect(regexp).Should(Equal("ATN_sample_\\d{2}_\\d{2}_\\d{4}.doc"))
+	//	})
+	//
+	//	It("When string contains number", func() {
+	//		regexp := parser.RegexpFrom("ATN_sample_<*>.doc")
+	//		Expect(regexp).Should(Equal("ATN_sample_.*.doc"))
+	//	})
+	//})
+
+	Context("Should verify if value has match with patterns", func() {
 		var parser *Parser
-		BeforeEach(func(){
+		BeforeEach(func() {
 			parser = NewParser()
 		})
 
-		It("When string contains number", func() {
-			regexp := parser.RegexpFrom("ATN_sample_<number>.doc")
-			Expect(regexp).Should(Equal("ATN_sample_\\d*.doc"))
+		Context("When string contains number", func() {
+			It("And appears only once", func() {
+				matched, err := parser.HasMatch("ATN_sample_1.doc", "ATN_sample_<number>.doc", )
+				Expect(matched).Should(BeTrue())
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+
+			It("And appears more than once", func() {
+				matched, err := parser.HasMatch("ATN_sample_1_2_3.doc", "ATN_sample_<number>_<number>_<number>.doc", )
+				Expect(matched).Should(BeTrue())
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+
+			It("And they are repeated", func() {
+				matched, err := parser.HasMatch("ATN_sample_123456.doc", "ATN_sample_<number>.doc", )
+				Expect(matched).Should(BeTrue())
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+
+			It("And the string does not match with pattern", func() {
+				matched, err := parser.HasMatch("ATN_sample_1_2_a.doc", "ATN_sample_<number>_<number>_<number>.doc", )
+				Expect(matched).Should(BeFalse())
+				Expect(err).ShouldNot(HaveOccurred())
+			})
 		})
 
 		It("When string contains date", func() {
-			regexp := parser.RegexpFrom("ATN_sample_<mm>_<dd>_<aaaa>.doc")
-			Expect(regexp).Should(Equal("ATN_sample_\\d{2}_\\d{2}_\\d{4}.doc"))
+			matched, err := parser.HasMatch("ATN_sample_05_22_2017.doc", "ATN_sample_<mm>_<dd>_<aaaa>.doc")
+			Expect(matched).Should(BeTrue())
+			Expect(err).ShouldNot(HaveOccurred())
 		})
 
-		It("When string contains number", func() {
-			regexp := parser.RegexpFrom("ATN_sample_<*>.doc")
-			Expect(regexp).Should(Equal("ATN_sample_.*.doc"))
+		Context("When string contains any word", func() {
+			It("As a date", func() {
+				matched, err := parser.HasMatch("ATN_sample_05_22_2017.doc", "ATN_sample_<*>.doc")
+				Expect(matched).Should(BeTrue())
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+
+			FIt("As any text", func() {
+				matched, err := parser.HasMatch("ATN_sample_document_02.doc", "ATN_<*>.doc")
+				Expect(matched).Should(BeTrue())
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+
+			It("As on file extension", func() {
+				matched, err := parser.HasMatch("ATN_sample_document_02.doc", "ATN_<*>.doc<*>")
+				Expect(matched).Should(BeTrue())
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+
+			It("As on file extension appended", func() {
+				matched, err := parser.HasMatch("ATN_sample_document_02.docx", "ATN_<*>.doc<*>")
+				Expect(matched).Should(BeTrue())
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+
+			It("And the string does not match with pattern", func() {
+				matched, _ := parser.HasMatch("ATN_sample_document_02.do", "ATN_<*>.doc<*>")
+				Expect(matched).Should(BeFalse())
+				//Expect(err).ShouldNot(HaveOccurred())
+			})
 		})
+
 	})
 
 })

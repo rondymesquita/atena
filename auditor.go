@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"regexp"
 )
 
-func NewAuditor(config Config) *Auditor{
-	return &Auditor{config}
+func NewAuditor(config Config, parser Parser) *Auditor {
+	return &Auditor{config, parser}
 }
 
-type Auditor struct{
+type Auditor struct {
 	config Config
+	parser Parser
 }
 
 func (auditor Auditor) Start() {
@@ -23,28 +23,28 @@ func (auditor Auditor) Start() {
 	list, _ := f.Tree(auditor.config.Management.Root)
 	fmt.Println("final list here: ", len(list))
 	//log.Println(list[82])
-	for index, el := range list{
+	for index, el := range list {
 		log.Println(index, el)
 	}
-	for index, el := range auditor.config.Management.Directories{
+	for index, el := range auditor.config.Management.Directories {
 		log.Println(index, el)
 	}
 
-	listResult , err := auditor.validateManagementRepository(list)
+	listResult, err := auditor.validateManagementRepository(list)
 	if err != nil {
 		log.Fatal("err on validate, ", err)
 	}
-	for _, result := range listResult{
+	for _, result := range listResult {
 		log.Println(result)
 	}
 }
 
-func(auditor Auditor) validateManagementRepository(list []string) ([]string, error){
-	for _, completeFileName := range list{
-		for _, directory := range auditor.config.Management.Directories{
+func (auditor Auditor) validateManagementRepository(list []string) ([]string, error) {
+	for _, completeFileName := range list {
+		for _, directory := range auditor.config.Management.Directories {
 
 			if strings.Contains(completeFileName, "${F}") {
-				handleFile(completeFileName, directory)
+				auditor.handleFile(completeFileName, directory)
 			} else if strings.Contains(completeFileName, "${D}") {
 				handleDirectory(completeFileName, directory)
 			}
@@ -54,23 +54,28 @@ func(auditor Auditor) validateManagementRepository(list []string) ([]string, err
 	return nil, nil
 }
 
-func handleFile(completeFileName string, directory Directory){
-	if strings.Contains(completeFileName, directory.Name){
+func (auditor Auditor) handleFile(completeFileName string, directory Directory) {
+	if strings.Contains(completeFileName, directory.Name) {
 
 		hasMatch := true
-		fileName := strings.Replace(completeFileName, directory.Name, "" , -1)
-		fileName = strings.Replace(fileName, "${F}/", "" , -1)
+		fileName := strings.Replace(completeFileName, directory.Name, "", -1)
+		fileName = strings.Replace(fileName, "${F}/", "", -1)
 
-		for _, rule := range directory.Rules{
+		for _, rule := range directory.Rules {
 
 			log.Println(fileName, rule.Pattern)
 
 			//match regex
-			regex := fmt.Sprintf("^%s$",rule.Pattern)
-			match, _ :=  regexp.MatchString(regex, fileName)
+			//regex := fmt.Sprintf("^%s$", rule.Pattern)
+			//match, _ := regexp.MatchString(regex, fileName)
+			matched, err := auditor.parser.HasMatch(fileName, rule.Pattern)
 
-			if !match{
-				hasMatch = match
+			if err != nil {
+				log.Fatal("err on parser, ", err)
+			}
+
+			if !matched {
+				hasMatch = matched
 				break
 			}
 
@@ -81,7 +86,6 @@ func handleFile(completeFileName string, directory Directory){
 	}
 }
 
-func handleDirectory(completeFileName string, directory Directory){
+func handleDirectory(completeFileName string, directory Directory) {
 
 }
-

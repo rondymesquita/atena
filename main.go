@@ -2,6 +2,7 @@ package main
 
 func main(){
   config := NewConfig()
-  auditor := NewAuditor(*config)
+  parser := NewParser()
+  auditor := NewAuditor(*config, *parser)
   auditor.Start()
 }
