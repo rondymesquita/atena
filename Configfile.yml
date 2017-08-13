@@ -1,5 +1,5 @@
 management:
-    root: ""
+    root: "./TEMPFOLDER/"
     directories:
         - name: ""
           rules:

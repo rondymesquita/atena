@@ -13,28 +13,6 @@ func TestParser(t *testing.T) {
 
 var _ = Describe("Parser behaviors", func() {
 
-	//Context("Should get the correct regexp from string template", func() {
-	//	var parser *Parser
-	//	BeforeEach(func(){
-	//		parser = NewParser()
-	//	})
-	//
-	//	It("When string contains number", func() {
-	//		regexp := parser.RegexpFrom("ATN_sample_<number>.doc")
-	//		Expect(regexp).Should(Equal("ATN_sample_\\d*.doc"))
-	//	})
-	//
-	//	It("When string contains date", func() {
-	//		regexp := parser.RegexpFrom("ATN_sample_<mm>_<dd>_<aaaa>.doc")
-	//		Expect(regexp).Should(Equal("ATN_sample_\\d{2}_\\d{2}_\\d{4}.doc"))
-	//	})
-	//
-	//	It("When string contains number", func() {
-	//		regexp := parser.RegexpFrom("ATN_sample_<*>.doc")
-	//		Expect(regexp).Should(Equal("ATN_sample_.*.doc"))
-	//	})
-	//})
-
 	Context("Should verify if value has match with patterns", func() {
 		var parser *Parser
 		BeforeEach(func() {
@@ -80,7 +58,7 @@ var _ = Describe("Parser behaviors", func() {
 				Expect(err).ShouldNot(HaveOccurred())
 			})
 
-			FIt("As any text", func() {
+			It("As any text", func() {
 				matched, err := parser.HasMatch("ATN_sample_document_02.doc", "ATN_<*>.doc")
 				Expect(matched).Should(BeTrue())
 				Expect(err).ShouldNot(HaveOccurred())
@@ -99,7 +77,7 @@ var _ = Describe("Parser behaviors", func() {
 			})
 
 			It("And the string does not match with pattern", func() {
-				matched, _ := parser.HasMatch("ATN_sample_document_02.do", "ATN_<*>.doc<*>")
+				matched, _ := parser.HasMatch("ATN_sample_document_02.doc", "ATN_<*>.doc<*>")
 				Expect(matched).Should(BeFalse())
 				//Expect(err).ShouldNot(HaveOccurred())
 			})

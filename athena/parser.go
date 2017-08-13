@@ -15,11 +15,13 @@ func NewParser() *Parser{
 
 	rules := map[string]string{
 		//".":"\\.",
+		".": "\\.",
 		"<number>": "\\d*",
 		"<aaaa>": "\\d{4}",
 		"<mm>": "\\d{2}",
 		"<dd>": "\\d{2}",
-		"<*>": ".*",
+		"<*>": ".+",
+
 
 	}
 

@@ -17,7 +17,6 @@ type Auditor struct {
 
 func (auditor Auditor) Start() {
 	auditor.config.Load()
-	//fmt.Println(auditor.config)
 
 	f := FileUtil{}
 	list, _ := f.Tree(auditor.config.Management.Root)
