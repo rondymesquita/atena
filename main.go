@@ -1,8 +1,10 @@
 package main
 
+import "./athena"
+
 func main(){
-  config := NewConfig()
-  parser := NewParser()
-  auditor := NewAuditor(*config, *parser)
+  config := athena.NewConfig()
+  parser := athena.NewParser()
+  auditor := athena.NewAuditor(*config, *parser)
   auditor.Start()
 }

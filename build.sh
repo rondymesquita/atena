@@ -66,6 +66,14 @@ destroy(){
   fi
 }
 
+permissions(){
+    echo "*** Changing file permissions to user '$USER'"
+    sudo chown -R $USER:$USER ./
+    sudo chmod +x *
+
+    echo "*** Permissions changed"
+}
+
 ask_for_confirmation(){
   read -p "Continue (y/n)?" CHOICE
   case "$CHOICE" in

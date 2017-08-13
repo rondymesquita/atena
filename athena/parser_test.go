@@ -1,4 +1,4 @@
-package main
+package athena
 
 import (
 	. "github.com/onsi/ginkgo"

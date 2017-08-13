@@ -1,4 +1,4 @@
-package main
+package athena
 
 import (
 	"gopkg.in/yaml.v2"
