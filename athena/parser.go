@@ -13,23 +13,25 @@ import (
 
 func NewParser() *Parser{
 
-	rules := map[string]string{
-		//".":"\\.",
+	//sanitize strings removing char that matches with regexp exp
+	stringrules := map[string]string{
 		".": "\\.",
+	}
+
+	regexprules := map[string]string{
 		"<number>": "\\d*",
 		"<aaaa>": "\\d{4}",
 		"<mm>": "\\d{2}",
 		"<dd>": "\\d{2}",
-		"<*>": ".+",
-
-
+		"<*>": ".*",
 	}
 
-	return &Parser{rules}
+	return &Parser{stringrules, regexprules }
 }
 
 type Parser struct{
-	rules map[string]string
+	stringrules map[string]string
+	regexprules map[string]string
 }
 
 func (p Parser) HasMatch(value, pattern string) (bool, error){
@@ -47,7 +49,12 @@ func (p Parser) HasMatch(value, pattern string) (bool, error){
 }
 
 func (p Parser) regexpFrom(value string) string{
-	for k, v := range p.rules{
+
+	for k, v := range p.stringrules{
+		value = strings.Replace(value, k, v, -1)
+	}
+
+	for k, v := range p.regexprules{
 		value = strings.Replace(value, k, v, -1)
 	}
 

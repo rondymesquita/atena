@@ -77,9 +77,9 @@ var _ = Describe("Parser behaviors", func() {
 			})
 
 			It("And the string does not match with pattern", func() {
-				matched, _ := parser.HasMatch("ATN_sample_document_02.doc", "ATN_<*>.doc<*>")
+				matched, err := parser.HasMatch("ATN_sample_document_02.docx", "ATN_<*>.doc")
 				Expect(matched).Should(BeFalse())
-				//Expect(err).ShouldNot(HaveOccurred())
+				Expect(err).ShouldNot(HaveOccurred())
 			})
 		})
 
