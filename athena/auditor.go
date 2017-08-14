@@ -13,8 +13,6 @@ func NewAuditor(config Config, parser Parser) *Auditor {
 type Auditor struct {
 	config           Config
 	parser           Parser
-	//machedPatterns   []string
-	//unmachedPatterns []string
 }
 
 func (auditor Auditor) Start() {
@@ -25,7 +23,7 @@ func (auditor Auditor) Start() {
 	_, err := auditor.validateManagementRepository(list)
 
 	if err != nil {
-		log.Fatal("err on validate, ", err)
+		log.Fatal("err on audit, ", err)
 	}
 }
 
@@ -48,14 +46,10 @@ func (auditor Auditor) validateManagementRepository(list []string) ([]string, er
 		}
 	}
 
-	log.Println("here")
-	for _, v := range unmachedPatterns{
-		log.Println(v)
-	}
+	ui := NewUI()
+	ui.PrintMatched(unmachedPatterns)
+	ui.PrintUnmatched(unmachedPatterns)
 
-	for _, v := range machedPatterns{
-		log.Println(v)
-	}
 
 	return nil, nil
 }
