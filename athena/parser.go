@@ -1,10 +1,9 @@
 package athena
 
 import (
-	"strings"
 	"fmt"
 	"regexp"
-	"log"
+	"strings"
 )
 
 //var Rules = map[string]string{}
@@ -23,7 +22,7 @@ func NewParser() *Parser{
 		"<aaaa>": "\\d{4}",
 		"<mm>": "\\d{2}",
 		"<dd>": "\\d{2}",
-		"<*>": ".*",
+		"<\\*>": ".*",
 	}
 
 	return &Parser{stringrules, regexprules }
@@ -36,13 +35,13 @@ type Parser struct{
 
 func (p Parser) HasMatch(value, pattern string) (bool, error){
 	regexPattern := p.regexpFrom(pattern)
-	log.Println(fmt.Sprintf("%s : %s : %s", value, regexPattern, pattern))
+
+	//log.Println(fmt.Sprintf("%s : %s : %s", value, regexPattern, pattern))
+
 	regex := fmt.Sprintf("^%s$",regexPattern)
 	matched, err :=  regexp.MatchString(regex, value)
 
-	if !matched{
-		log.Println(fmt.Sprintf("%s does not match with %s", value, pattern))
-	}
+
 
 	return matched, err
 
@@ -50,9 +49,10 @@ func (p Parser) HasMatch(value, pattern string) (bool, error){
 
 func (p Parser) regexpFrom(value string) string{
 
-	for k, v := range p.stringrules{
-		value = strings.Replace(value, k, v, -1)
-	}
+	//for k, v := range p.stringrules{
+	//	value = strings.Replace(value, k, v, -1)
+	//}
+	value = regexp.QuoteMeta(value)
 
 	for k, v := range p.regexprules{
 		value = strings.Replace(value, k, v, -1)
