@@ -12,4 +12,4 @@ management:
         - name: "/TEMP2"
           rules:
             - pattern: "file_<*>.txt"
-            - pattern: "<*>.txt"
+            - pattern: "subfile_<number>.txt"
