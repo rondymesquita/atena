@@ -7,25 +7,66 @@ import (
 )
 
 func NewAuditor(config Config, parser Parser) *Auditor {
-	return &Auditor{config, parser}
+	cli := *NewCLI()
+	return &Auditor{config, parser, cli}
 }
 
 type Auditor struct {
-	config           Config
-	parser           Parser
+	config Config
+	parser Parser
+	cli    CLI
 }
 
 func (auditor Auditor) Start() {
 	auditor.config.Load()
+	auditor.validate()
+	//_, err := auditor.validateManagementRepository(list)
 
+	//if err != nil {
+	//	log.Fatal("err on audit, ", err)
+	//}
+}
+
+func (auditor Auditor) validate() {
+	config := auditor.config
 	f := FileUtil{}
-	list, _ := f.Tree(auditor.config.Management.Root)
-	_, err := auditor.validateManagementRepository(list)
 
-	if err != nil {
-		log.Fatal("err on audit, ", err)
+	var unmachedPatterns []string
+
+	for _, directory := range auditor.config.Management.Directories {
+		completeDirectoryName := fmt.Sprintf("%s%s", config.Management.Root, directory.Name)
+		fileList, _ := f.List(completeDirectoryName)
+
+		var matchList []bool
+		hasMatch := true
+		for _, file := range fileList {
+			for _, rule := range directory.Rules {
+
+				matched, err := auditor.parser.HasMatch(file, rule.Pattern)
+
+				if err != nil {
+
+				}
+
+				matchList = append(matchList, matched)
+				log.Print(completeDirectoryName, "   ", matchList)
+				if !matched {
+					unmachedPattern := fmt.Sprintf("\"%s\" does not match with \"%s\"", file, rule.Pattern)
+					unmachedPatterns = append(unmachedPatterns, unmachedPattern)
+					log.Print(unmachedPattern)
+					hasMatch = false
+				}
+
+			}
+
+		}
+		log.Println(hasMatch)
 	}
 }
+
+
+
+
 
 func (auditor Auditor) validateManagementRepository(list []string) ([]string, error) {
 
@@ -46,10 +87,13 @@ func (auditor Auditor) validateManagementRepository(list []string) ([]string, er
 		}
 	}
 
-	ui := NewUI()
-	ui.PrintMatched(unmachedPatterns)
-	ui.PrintUnmatched(unmachedPatterns)
+	cli := NewCLI()
 
+	if len(unmachedPatterns) == 0 {
+		cli.Print("Directories validated with success.")
+	} else {
+		cli.PrintUnmatched(unmachedPatterns)
+	}
 
 	return nil, nil
 }
@@ -58,25 +102,30 @@ func (auditor Auditor) handleFile(completeFileName string, directory Directory, 
 	if strings.Contains(completeFileName, directory.Name) {
 
 		//hasMatch := true
+		var matchList []bool
 		fileName := strings.Replace(completeFileName, directory.Name, "", -1)
 		fileName = strings.Replace(fileName, "${F}/", "", -1)
 
-		//match regex
-		matched, err := auditor.parser.HasMatch(fileName, directory.Pattern)
+		//match regex with each rule pattern
+		for _, rule := range directory.Rules {
 
-		if err != nil {
-			log.Fatal("err on parser, ", err)
+			matched, err := auditor.parser.HasMatch(fileName, rule.Pattern)
+			matchList = append(matchList, matched)
+			if err != nil {
+				log.Fatal("err on parser, ", err)
+			}
+
+			if !matched {
+				//hasMatch = matched
+				unmachedPattern := fmt.Sprintf("\"%s\" does not match with \"%s\"", fileName, rule.Pattern)
+				*unmachedPatterns = append(*unmachedPatterns, unmachedPattern)
+			} else {
+				machedPattern := fmt.Sprintf("=====> \"%s\" matches with \"%s\"", fileName, rule.Pattern)
+				*machedPatterns = append(*machedPatterns, machedPattern)
+			}
 		}
 
-		if !matched {
-			unmachedPattern := fmt.Sprintf("\"%s\" does not match with \"%s\"", fileName, directory.Pattern)
-			*unmachedPatterns = append(*unmachedPatterns, unmachedPattern)
-		} else {
-			machedPattern := fmt.Sprintf("=====> \"%s\" matches with \"%s\"", fileName, directory.Pattern)
-			*machedPatterns = append(*machedPatterns, machedPattern)
-			//auditor.machedPatterns = append(auditor.machedPatterns, machedPattern)
-		}
-
+		log.Print(matchList)
 
 	}
 }

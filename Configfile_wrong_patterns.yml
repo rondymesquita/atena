@@ -1,0 +1,14 @@
+management:
+    root: "./TEMPFOLDER"
+    directories:
+        - name: "/TEMP1/SUBTEMP1/SUBSUBTEMP1"
+          pattern: "file.txt"
+
+        - name: "/TEMP1/SUBTEMP1"
+          pattern: "file_>.txt"
+
+        - name: "/TEMP2"
+          pattern: "file_<*>.txt"
+
+        - name: "/TEMP2"
+          pattern: "<number>.txt"

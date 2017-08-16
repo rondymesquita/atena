@@ -46,7 +46,7 @@ var _ = Describe("Parser behaviors", func() {
 		})
 
 		It("When string contains date", func() {
-			matched, err := parser.HasMatch("sample_05_22_2017.doc", "sample_<mm>_<dd>_<aaaa>.doc")
+			matched, err := parser.HasMatch("sample_05_22_2017.doc", "sample_<mm>_<dd>_<yyyy>.doc")
 			Expect(matched).Should(BeTrue())
 			Expect(err).ShouldNot(HaveOccurred())
 		})

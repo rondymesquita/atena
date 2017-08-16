@@ -19,7 +19,7 @@ func NewParser() *Parser{
 
 	regexprules := map[string]string{
 		"<number>": "\\d*",
-		"<aaaa>": "\\d{4}",
+		"<yyyy>": "\\d{4}",
 		"<mm>": "\\d{2}",
 		"<dd>": "\\d{2}",
 		"<\\*>": ".*",
@@ -40,8 +40,6 @@ func (p Parser) HasMatch(value, pattern string) (bool, error){
 
 	regex := fmt.Sprintf("^%s$",regexPattern)
 	matched, err :=  regexp.MatchString(regex, value)
-
-
 
 	return matched, err
 

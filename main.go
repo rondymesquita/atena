@@ -1,6 +1,6 @@
 package main
 
-import "atena/athena"
+import "athena/athena"
 
 func main(){
   config := athena.NewConfig()

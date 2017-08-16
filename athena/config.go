@@ -21,15 +21,26 @@ type Management struct {
 }
 
 type Directory struct {
-	Name    string
+	Name  string
+	Rules []Rule
+}
+
+type Rule struct {
 	Pattern string
 }
 
 func (config *Config) Test() {
 	var c Config
 	c.Management.Root = "Root"
-	d := Directory{"Folder1", "xxx"}
-	d2 := Directory{"Folder1", "yyy"}
+
+	var rules []Rule
+	r1 := Rule{Pattern:"xxx"}
+	r2 := Rule{Pattern:"yyy"}
+	rules = append(rules, r1)
+	rules = append(rules, r2)
+
+	d := Directory{"Folder1", rules}
+	d2 := Directory{"Folder1", rules}
 	c.Management.Directories = append(c.Management.Directories, d)
 	c.Management.Directories = append(c.Management.Directories, d2)
 	dump, err := yaml.Marshal(&c)

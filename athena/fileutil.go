@@ -10,6 +10,29 @@ import (
 
 type FileUtil struct {}
 
+func (fileUtil FileUtil)List(dir string)([]string, error){
+	if dir == ""{
+		errMessage := "Directory param must not be an empty string"
+		log.Fatal(errMessage)
+		return nil, errors.New(errMessage)
+	}
+
+	var list []string
+	currentList, err := ioutil.ReadDir(dir)
+	if err != nil {
+		log.Fatal("Error while listing directories.\n", err)
+		return nil, err
+	}
+
+	for _, file := range currentList {
+		if !file.IsDir() {
+			list = append(list, file.Name())
+		}
+	}
+
+	return list, nil
+}
+
 func (fileutil FileUtil) Tree(dir string) ([]string, error) {
 	if dir == ""{
 		errMessage := "Directory param must not be an empty string"
